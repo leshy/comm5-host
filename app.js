@@ -1,7 +1,4 @@
-
-/**
- * Module dependencies.
- */
+// Module dependencies.
 var mongoserver = "localhost"
 var mongoport = 27017
 var mongodbname = "test"
@@ -15,8 +12,9 @@ var mongo = require('mongodb');
 var BSON = mongo.BSONPure
 var io = require('socket.io')
 
-// Configuration
+var comm = require('comm/serverside')
 
+// configuration
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
@@ -44,10 +42,7 @@ db.open( function (err) {
     })
 });
 
-
-
 // Routes
-
 app.post ('*', function (req, res, next) {
     console.log (" - " + req.method + " " + req.url + " " )
     next()
@@ -58,18 +53,14 @@ app.get ('*', function (req, res, next) {
     next()
 })
 
-
-
 app.get('/', function(req, res){
 	res.render('index', { title: name })
 });
-
 
 if (!module.parent) {
   app.listen(3333);
   console.log("Express server listening");
 }
-
 
 
 socket.on('connection', function (socket) {

@@ -1,17 +1,17 @@
 (function() {
-  var $, comm, io, socket, _;
+  var $, comm, io, _;
   _ = window._ = require('underscore');
   $ = window.$ = require('jquery-browserify');
   io = window.io = require('socket.io-browserify');
   comm = window.comm = require('comm/clientside');
-  socket = io.connect('http://localhost');
-  socket.on('news', function(data) {
-    console.log(data);
-    return socket.emit('my other event', {
-      my: 'data'
-    });
-  });
   $(document).ready(function() {
-    return $(document.body).append(_.keys(comm).join(', '));
+    var socket;
+    $(document.body).append(_.keys(comm).join(', '));
+    socket = new comm.WebsocketClient({
+      realm: 'server'
+    });
+    return socket.connect('http://localhost:3333', function() {
+      return console.log('connected');
+    });
   });
 }).call(this);
