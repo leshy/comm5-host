@@ -1,6 +1,8 @@
 _ = window._ = require('underscore')
 $ = window.$ = require('jquery-browserify')
 io = window.io = require('socket.io-browserify')
+Backbone = window.Backbone = require('backbone')
+
 comm = window.comm = require 'comm/clientside'
 
 $(document).ready ->
@@ -12,6 +14,9 @@ $(document).ready ->
     collection = window.collection = new comm.RemoteCollection { name: 'test' }
     collection.connect(socket)
 
+
+    collection.defineModel 'test', {}
+
     socket.connect 'http://localhost:3333', -> console.log 'connected'
 
     socket.subscribe true, (msg,reply,next,transmit) ->
@@ -22,10 +27,7 @@ $(document).ready ->
     socket.subscribe {hello: true}, (msg,reply,next,transmit) ->
         reply.end()
 
-        collection.find {},{}, (element) ->
-            console.log('element',element)
-            body.append JSON.stringify(element) + "<br>"
-
-    
+        collection.findModels {},{}, (element) ->
+            if element then body.append JSON.stringify(element) + "<br>"; window.m = element
     
     body.append "<br><br>"

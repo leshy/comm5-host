@@ -1,8 +1,9 @@
 (function() {
-  var $, comm, io, _;
+  var $, Backbone, comm, io, _;
   _ = window._ = require('underscore');
   $ = window.$ = require('jquery-browserify');
   io = window.io = require('socket.io-browserify');
+  Backbone = window.Backbone = require('backbone');
   comm = window.comm = require('comm/clientside');
   $(document).ready(function() {
     var body, collection, socket;
@@ -15,6 +16,7 @@
       name: 'test'
     });
     collection.connect(socket);
+    collection.defineModel('test', {});
     socket.connect('http://localhost:3333', function() {
       return console.log('connected');
     });
@@ -27,9 +29,11 @@
       hello: true
     }, function(msg, reply, next, transmit) {
       reply.end();
-      return collection.find({}, {}, function(element) {
-        console.log('element', element);
-        return body.append(JSON.stringify(element) + "<br>");
+      return collection.findModels({}, {}, function(element) {
+        if (element) {
+          body.append(JSON.stringify(element) + "<br>");
+          return window.m = element;
+        }
       });
     });
     return body.append("<br><br>");
