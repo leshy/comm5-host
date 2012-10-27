@@ -53,13 +53,15 @@ console.log _.keys(comm).join(', ')
 testcollection = new comm.MongoCollectionNode { db: db, collection: 'test' }
 
 ws = new comm.WebsocketServer { realm: 'web', express: app }
+ws.connect testcollection
+
+ws.subscribe true, (msg,reply,next,transmit) ->
+    console.log "GOT",msg
+    reply.end()
+    transmit()
+        
+
+
 ws.listen (client) ->
     console.log('got client')
-    client.connect testcollection
-    
-    client.subscribe true, (msg,reply,next,transmit) ->
-        console.log "GOT",msg
-        reply.end()
-        transmit()
-        
     client.msg { hello: 'there' }

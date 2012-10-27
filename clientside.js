@@ -12,18 +12,17 @@
     socket = new comm.WebsocketClient({
       realm: 'server'
     });
+    socket.pass();
+    socket.connect('http://localhost:3333', function() {
+      return console.log('connected');
+    });
     collection = window.collection = new comm.RemoteCollection({
       name: 'test'
     });
     collection.connect(socket);
-    collection.defineModel('test', {});
-    socket.connect('http://localhost:3333', function() {
-      return console.log('connected');
-    });
-    socket.subscribe(true, function(msg, reply, next, transmit) {
-      reply.end();
-      transmit();
-      return next();
+    collection.defineModel('default model', {});
+    collection.defineModel('bla2', {
+      k: "HAHEHAA"
     });
     socket.subscribe({
       hello: true

@@ -50,14 +50,14 @@
     realm: 'web',
     express: app
   });
+  ws.connect(testcollection);
+  ws.subscribe(true, function(msg, reply, next, transmit) {
+    console.log("GOT", msg);
+    reply.end();
+    return transmit();
+  });
   ws.listen(function(client) {
     console.log('got client');
-    client.connect(testcollection);
-    client.subscribe(true, function(msg, reply, next, transmit) {
-      console.log("GOT", msg);
-      reply.end();
-      return transmit();
-    });
     return client.msg({
       hello: 'there'
     });
