@@ -1,6 +1,6 @@
 mongoserver = "localhost"
 mongoport = 27017
-mongodbname = "test"
+mongodbname = "testdb"
 name = "commhost"
 
 _ = require("underscore")
@@ -44,17 +44,22 @@ app.get '/', (req, res) -> res.render( 'index', { title: name } )
 
 app.listen 3333
 
-# socketio
-#socket = io.listen(app);
 
-#socket.on 'connection', (socket) -> console.log('got connection')
+
+# juice
+
+console.log _.keys(comm).join(', ')
+
+testcollection = new comm.MongoCollectionNode { db: db, collection: 'test' }
 
 ws = new comm.WebsocketServer { realm: 'web', express: app }
 ws.listen (client) ->
     console.log('got client')
+    client.connect testcollection
     
     client.subscribe true, (msg,reply,next,transmit) ->
         console.log "GOT",msg
         reply.end()
+        transmit()
         
     client.msg { hello: 'there' }

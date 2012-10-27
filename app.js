@@ -1,8 +1,8 @@
 (function() {
-  var BSON, app, comm, db, express, io, mongo, mongodbname, mongoport, mongoserver, name, sys, ws, _;
+  var BSON, app, comm, db, express, io, mongo, mongodbname, mongoport, mongoserver, name, sys, testcollection, ws, _;
   mongoserver = "localhost";
   mongoport = 27017;
-  mongodbname = "test";
+  mongodbname = "testdb";
   name = "commhost";
   _ = require("underscore");
   express = require('express');
@@ -41,15 +41,22 @@
     });
   });
   app.listen(3333);
+  console.log(_.keys(comm).join(', '));
+  testcollection = new comm.MongoCollectionNode({
+    db: db,
+    collection: 'test'
+  });
   ws = new comm.WebsocketServer({
     realm: 'web',
     express: app
   });
   ws.listen(function(client) {
     console.log('got client');
+    client.connect(testcollection);
     client.subscribe(true, function(msg, reply, next, transmit) {
       console.log("GOT", msg);
-      return reply.end();
+      reply.end();
+      return transmit();
     });
     return client.msg({
       hello: 'there'

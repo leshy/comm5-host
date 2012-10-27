@@ -4,11 +4,28 @@ io = window.io = require('socket.io-browserify')
 comm = window.comm = require 'comm/clientside'
 
 $(document).ready ->
-    $(document.body).append _.keys(comm).join ', '
+    body = $(document.body)
+    body.append "comm5: " + _.keys(comm).join ', '
+
     socket = new comm.WebsocketClient { realm: 'server' }
+
+    collection = window.collection = new comm.RemoteCollection { name: 'test' }
+    collection.connect(socket)
+
     socket.connect 'http://localhost:3333', -> console.log 'connected'
+
     socket.subscribe true, (msg,reply,next,transmit) ->
-        console.log "GOT", msg.json()
-        reply.end { pong : true }
+        reply.end()
+        transmit()
+        next()
 
+    socket.subscribe {hello: true}, (msg,reply,next,transmit) ->
+        reply.end()
 
+        collection.find {},{}, (element) ->
+            console.log('element',element)
+            body.append JSON.stringify(element) + "<br>"
+
+    
+    
+    body.append "<br><br>"
