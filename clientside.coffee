@@ -7,5 +7,8 @@ $(document).ready ->
     $(document.body).append _.keys(comm).join ', '
     socket = new comm.WebsocketClient { realm: 'server' }
     socket.connect 'http://localhost:3333', -> console.log 'connected'
+    socket.subscribe true, (msg,reply,next,transmit) ->
+        console.log "GOT", msg.json()
+        reply.end { pong : true }
 
 

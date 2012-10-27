@@ -10,8 +10,14 @@
     socket = new comm.WebsocketClient({
       realm: 'server'
     });
-    return socket.connect('http://localhost:3333', function() {
+    socket.connect('http://localhost:3333', function() {
       return console.log('connected');
+    });
+    return socket.subscribe(true, function(msg, reply, next, transmit) {
+      console.log("GOT", msg.json());
+      return reply.end({
+        pong: true
+      });
     });
   });
 }).call(this);
